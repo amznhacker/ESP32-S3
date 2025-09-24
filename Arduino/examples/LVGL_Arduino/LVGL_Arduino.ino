@@ -9,15 +9,20 @@
 #include "SD_Card.h"
 #include "LVGL_Example.h"
 #include "BAT_Driver.h"
+#include "Face_Emote.h"
 
 void Driver_Loop(void *parameter)
 {
-  Wireless_Test2();
   while(1)
   {
     PCF85063_Loop();
     BAT_Get_Volts();
-    vTaskDelay(pdMS_TO_TICKS(100));
+    
+    // Update face with audio energy
+    uint16_t audio_energy = Music_Energy();
+    Face_Update_Audio(audio_energy);
+    
+    vTaskDelay(pdMS_TO_TICKS(50));
   }
 }
 void Driver_Init()
@@ -39,13 +44,8 @@ void setup()
   LCD_Init();
   Lvgl_Init();
 
-  Lvgl_Example1();
-  // lv_demo_widgets();
-  // lv_demo_benchmark();
-  // lv_demo_keypad_encoder();
-  // lv_demo_music();
-  // lv_demo_printer();
-  // lv_demo_stress();
+  // Initialize face instead of example UI
+  Face_Init();
   
   xTaskCreatePinnedToCore(
     Driver_Loop,           
