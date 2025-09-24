@@ -1,5 +1,6 @@
 #pragma once
-#include "WiFi.h"
+// WiFi removed to save RAM for BLE face system
+// #include "WiFi.h"
 #include <BLEDevice.h>
 #include <BLEScan.h>
 

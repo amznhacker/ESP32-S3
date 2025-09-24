@@ -1,33 +1,15 @@
 #include "Wireless.h"
 
-
+// Removed WiFi functionality to save RAM for BLE face system
 bool WIFI_Connection = 0;
 uint8_t WIFI_NUM = 0;
 uint8_t BLE_NUM = 0;
-bool Scan_finish = 0;
+bool Scan_finish = 1;  // Always finished since we're not scanning
 int wifi_scan_number()
 {
-  printf("/**********WiFi Test**********/\r\n");
-  // Set WiFi to station mode and disconnect from an AP if it was previously connected.
-  WiFi.mode(WIFI_STA);                           
-  WiFi.setSleep(true);     
-  // WiFi.scanNetworks will return the number of networks found.
-  int count = WiFi.scanNetworks();
-  if (count == 0)
-  {
-    printf("No WIFI device was scanned\r\n");
-  }
-  else{
-    printf("Scanned %d Wi-Fi devices\r\n",count);
-  }
-  
-  // Delete the scan result to free memory for code below.
-  WiFi.disconnect(true);
-  WiFi.scanDelete();
-  WiFi.mode(WIFI_OFF);  
-  vTaskDelay(100);           
-  printf("/*******WiFi Test Over********/\r\n\r\n");
-  return count;
+  // WiFi disabled to save RAM for BLE face system
+  printf("WiFi disabled - using BLE for face emotions\r\n");
+  return 0;
 }
 int ble_scan_number()
 {
@@ -54,26 +36,23 @@ int ble_scan_number()
 }
 extern char buffer[128];    /* Make sure buffer is enough for `sprintf` */
 void Wireless_Test1(){
-  // BLE_NUM = ble_scan_number();                       // !!! Please note that continuing to use Bluetooth will result in allocation failure due to RAM usage, so pay attention to RAM usage when Bluetooth is turned on
-  WIFI_NUM = wifi_scan_number();
+  // WiFi removed, BLE handled by Face_Emote system
+  WIFI_NUM = 0;
+  BLE_NUM = 1;  // BLE is active for face emotions
   Scan_finish = 1;
 }
 
 void WirelessScanTask(void *parameter) {
-  // BLE_NUM = ble_scan_number();                       // !!! Please note that continuing to use Bluetooth will result in allocation failure due to RAM usage, so pay attention to RAM usage when Bluetooth is turned on
-  WIFI_NUM = wifi_scan_number();
+  // No scanning needed - BLE handled by Face system
+  WIFI_NUM = 0;
+  BLE_NUM = 1;
   Scan_finish = 1;
   vTaskDelay(pdMS_TO_TICKS(1000));
   vTaskDelete(NULL);
 }
 void Wireless_Test2(){
-  xTaskCreatePinnedToCore(
-    WirelessScanTask,    
-    "WirelessScanTask",   
-    4096,                
-    NULL,                 
-    2,                   
-    NULL,                 
-    0                   
-  );
+  // Simplified - no task needed
+  WIFI_NUM = 0;
+  BLE_NUM = 1;
+  Scan_finish = 1;
 }

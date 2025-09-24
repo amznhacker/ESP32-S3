@@ -82,10 +82,10 @@ void Face_Update_Audio(uint16_t audio_energy) {
     if (is_talking != was_talking) {
         if (is_talking) {
             printf("Started talking - Energy: %d\n", audio_energy);
-            lv_timer_set_period(mouth_timer, 80); // Faster mouth animation
+            lv_timer_set_period(mouth_timer, 300); // Slower mouth animation
         } else {
             printf("Stopped talking\n");
-            lv_timer_set_period(mouth_timer, 200); // Slower mouth animation
+            lv_timer_set_period(mouth_timer, 500); // Much slower when not talking
             Face_Set_Emotion(EMOTION_NEUTRAL);
         }
     }

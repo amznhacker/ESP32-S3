@@ -18,11 +18,15 @@ void Driver_Loop(void *parameter)
     PCF85063_Loop();
     BAT_Get_Volts();
     
-    // Update face with audio energy
-    uint16_t audio_energy = Music_Energy();
-    Face_Update_Audio(audio_energy);
+    // Update face with audio energy (less frequently)
+    static uint8_t face_counter = 0;
+    if (++face_counter >= 4) {  // Update every 4th cycle
+        face_counter = 0;
+        uint16_t audio_energy = Music_Energy();
+        Face_Update_Audio(audio_energy);
+    }
     
-    vTaskDelay(pdMS_TO_TICKS(50));
+    vTaskDelay(pdMS_TO_TICKS(200));
   }
 }
 void Driver_Init()
@@ -45,7 +49,9 @@ void setup()
   Lvgl_Init();
 
   // Initialize face instead of example UI
+  printf("Initializing face...\r\n");
   Face_Init();
+  printf("Face initialization complete\r\n");
   
   xTaskCreatePinnedToCore(
     Driver_Loop,           
